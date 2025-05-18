@@ -30,6 +30,7 @@ use std::env;
 /// - Command-line interface mimics the behavior of the traditional `rm` command.
 ///
 /// ## TODO
+/// - Handle command line arguments to view, empty and list trash contents.
 /// - Store metadata along with deleted files to make restoring easier.
 /// - Restore files from trash using CLI
 /// - View trash contents via CLI.

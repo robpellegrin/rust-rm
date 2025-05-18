@@ -3,6 +3,8 @@ use std::path::Path;
 
 use crate::utils;
 
+// TODO --> Manage name conflicts for existing files in trash.
+
 pub fn mv(source: &str) -> std::io::Result<()> {
     // Expand the ~ in the destination path
     let trash_dir = utils::expand_tilde("~/trash");

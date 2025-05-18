@@ -1,6 +1,8 @@
 use std::env;
 use std::fs;
 
+/// TODO --> Display relevant metadata in a table format.
+
 pub fn list_trash_contents() {
     // Get the path to the trash directory
     let home_dir = env::home_dir().expect("Failed to get home directory");
