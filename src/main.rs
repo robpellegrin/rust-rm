@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
-use std::env;
-use std::fs;
-use std::path::Path;
-use std::path::PathBuf;
-
+mod mv;
+mod utils;
 mod restore;
+
+use mv::mv;
+use std::env;
 
 /// =====================================================================
 /// Project Name: rust rm
@@ -50,44 +50,4 @@ fn main() {
             std::process::exit(-1);
         }
     }
-}
-
-fn expand_tilde(path: &str) -> PathBuf {
-    let home = dirs::home_dir().expect("Could not find home directory");
-
-    let path = if path.starts_with("~") {
-        // Remove ~ and join with home dir
-        home.join(&path[2..])
-    } else {
-        // Return the path as is
-        PathBuf::from(path)
-    };
-
-    return path;
-}
-
-fn mv(source: &str) -> std::io::Result<()> {
-    // Expand the ~ in the destination path
-    let trash_dir = expand_tilde("~/trash");
-
-    // Get the filename from the source path
-    let source_path = Path::new(source);
-
-    let filename = match source_path.file_name() {
-        Some(name) => name.to_string_lossy().into_owned(), // Convert OsStr to String
-        None => {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::InvalidInput,
-                "Source path does not contain a valid filename",
-            ));
-        }
-    };
-
-    // Join the trash directory with the filename
-    let trash_path = trash_dir.join(filename);
-
-    // Try to rename (move) the file to the trash directory
-    fs::rename(source, &trash_path)?;
-
-    Ok(())
 }
