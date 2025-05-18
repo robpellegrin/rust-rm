@@ -1,7 +1,12 @@
-// In your main.rs or lib.rs
 #![allow(dead_code)]
 
 use std::env;
+use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
+
+mod restore;
+
 /// =====================================================================
 /// Project Name: rust rm
 /// Description: An enhanced version of the common rm command.
@@ -25,15 +30,11 @@ use std::env;
 /// - Command-line interface mimics the behavior of the traditional `rm` command.
 ///
 /// ## TODO
+/// - Store metadata along with deleted files to make restoring easier.
 /// - Restore files from trash using CLI
 /// - View trash contents via CLI.
-/// - Config file to allow user to specify custom path to trash.
+/// - Config file to allow user to specify custom path to trash, size limitations, etc.
 /// - Integration with GUI trash bins (e.g., Dolphin, Nautilus) for restoration.
-use std::fs;
-use std::path::Path;
-use std::path::PathBuf;
-
-mod restore;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -46,6 +47,7 @@ fn main() {
     for arg in args.iter().skip(1) {
         if let Err(e) = mv(arg) {
             eprintln!("Error moving file '{}' to trash: {}", arg, e);
+            std::process::exit(-1);
         }
     }
 }
@@ -54,9 +56,11 @@ fn expand_tilde(path: &str) -> PathBuf {
     let home = dirs::home_dir().expect("Could not find home directory");
 
     let path = if path.starts_with("~") {
-        home.join(&path[2..]) // Remove ~ and join with home dir
+        // Remove ~ and join with home dir
+        home.join(&path[2..])
     } else {
-        PathBuf::from(path) // Return the path as is
+        // Return the path as is
+        PathBuf::from(path)
     };
 
     return path;
