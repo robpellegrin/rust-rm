@@ -1,11 +1,9 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::utils;
 
-// TODO --> Manage name conflicts for existing files in trash.
-
-pub fn mv(source: &str) -> std::io::Result<()> {
+pub fn move_to_trash(source: &str) -> std::io::Result<()> {
     // Expand the ~ in the destination path
     let trash_dir = utils::expand_tilde("~/trash");
 
@@ -22,24 +20,8 @@ pub fn mv(source: &str) -> std::io::Result<()> {
         }
     };
 
-    // Generate the initial trash path
-    let mut trash_path = trash_dir.join(&filename);
-
-    // Check if the file exists in the trash directory
-    let mut counter = 1;
-    while trash_path.exists() {
-        // If a conflict, append a suffix like (1), (2), etc.
-        let path = Path::new(&filename); // Convert filename to Path to use extension
-        let new_filename = format!(
-            "{}({}){}",
-            path.file_stem().unwrap_or_default().to_string_lossy(), // File name without extension
-            counter,
-            path.extension()
-                .map_or(String::new(), |ext| format!(".{}", ext.to_string_lossy())) // Preserve the extension
-        );
-        trash_path = trash_dir.join(new_filename);
-        counter += 1;
-    }
+    // Get a resolved trash path that avoids naming conflicts
+    let trash_path = resolve_naming_conflict(&trash_dir, &filename);
 
     // Try to rename (move) the file to the trash directory
     fs::rename(source, &trash_path)?;
@@ -47,3 +29,24 @@ pub fn mv(source: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+/// Given a target directory and desired filename, append suffixes like (1), (2), etc. if needed
+/// in order to resolve naming conflicts.
+fn resolve_naming_conflict(trash_dir: &Path, filename: &str) -> PathBuf {
+    let mut candidate = trash_dir.join(filename);
+    let mut counter = 1;
+
+    while candidate.exists() {
+        let path = Path::new(filename);
+        let new_filename = format!(
+            "{}({}){}",
+            path.file_stem().unwrap_or_default().to_string_lossy(),
+            counter,
+            path.extension()
+                .map_or(String::new(), |ext| format!(".{}", ext.to_string_lossy()))
+        );
+        candidate = trash_dir.join(new_filename);
+        counter += 1;
+    }
+
+    candidate
+}
