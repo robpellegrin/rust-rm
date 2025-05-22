@@ -1,3 +1,13 @@
+/// =====================================================================
+/// Project Name: rust rm
+/// Description: An enhanced version of the common rm utility.
+/// Author: Robert Pellegrin
+/// Date: 2025-05-17
+/// Version: 0.0.1
+/// License: MIT
+/// Repository:
+/// =====================================================================
+///
 use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
@@ -8,7 +18,7 @@ use clap::{ArgAction, Parser};
 )]
 
 pub struct Args {
-    //
+    /// remove directories and their contents recursively
     #[arg(short = 'r', long, action = ArgAction::SetTrue)]
     pub recursive: bool,
 
