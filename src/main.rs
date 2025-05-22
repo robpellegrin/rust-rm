@@ -1,6 +1,6 @@
 /// =====================================================================
 /// Project Name: rust rm
-/// Description: An enhanced version of the common rm command.
+/// Description: An enhanced version of the common rm utility.
 /// Author: Robert Pellegrin
 /// Date: 2025-05-17
 /// Version: 0.0.1
@@ -37,10 +37,11 @@ use clap::Parser;
 fn main() {
     // Parse the command line arguments
     let args = Args::parse();
+    let mut allow_dir_removal = false;
 
-    // Check if the 'run' flag was passed, and call 'test' if true
+    // Check if the 'recursive' flag was passed, and call 'test' if true
     if args.recursive {
-        args::test();
+        allow_dir_removal = true;
     } else if args.view_trash{
         args::view_trash();
     }
@@ -49,7 +50,7 @@ fn main() {
 
     // Loop over each argument (excluding the first one, which is the program name)
     for arg in &args.files {
-        if let Err(e) = mv::move_to_trash(arg) {
+        if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
             eprintln!("Error moving file '{}' to trash: {}", arg, e);
         }
     }
