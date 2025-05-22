@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 dirs = "4.0.0"
+clap = {version = "4.5", features = ["derive"]}
+
