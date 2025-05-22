@@ -1,14 +1,28 @@
-use std::fs;
+use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 use crate::utils;
 
-pub fn move_to_trash(source: &str) -> std::io::Result<()> {
+/// .
+///
+/// # Errors
+///
+/// This function will return an error if .
+pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
     // Expand the ~ in the destination path
     let trash_dir = utils::expand_tilde("~/trash");
 
     // Get the filename from the source path
     let source_path = Path::new(source);
+
+    // Check if the source path is a directory
+    if source_path.is_dir() && !allow_dir_removal {
+        return Err(io::Error::new(
+            ErrorKind::InvalidInput,
+            "Cannot move a directory to trash",
+        ));
+    }
 
     let filename = match source_path.file_name() {
         Some(name) => name.to_string_lossy().into_owned(), // Convert OsStr to String
