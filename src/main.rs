@@ -2,7 +2,6 @@
 
 mod mv;
 mod utils;
-mod restore;
 
 use mv::mv;
 use std::env;
