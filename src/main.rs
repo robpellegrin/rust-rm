@@ -1,11 +1,3 @@
-#![allow(dead_code)]
-
-mod mv;
-mod utils;
-
-use mv::mv;
-use std::env;
-
 /// =====================================================================
 /// Project Name: rust rm
 /// Description: An enhanced version of the common rm command.
@@ -35,19 +27,30 @@ use std::env;
 /// - View trash contents via CLI.
 /// - Config file to allow user to specify custom path to trash, size limitations, etc.
 /// - Integration with GUI trash bins (e.g., Dolphin, Nautilus) for restoration.
+mod args;
+mod mv;
+mod utils;
+
+use args::Args;
+use clap::Parser;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    // Parse the command line arguments
+    let args = Args::parse();
 
-    if args.len() <= 1 {
-        println!("Missing args");
+    // Check if the 'run' flag was passed, and call 'test' if true
+    if args.recursive {
+        args::test();
+    } else if args.view_trash{
+        args::view_trash();
     }
 
+    // let args: Vec<String> = env::args().collect();
+
     // Loop over each argument (excluding the first one, which is the program name)
-    for arg in args.iter().skip(1) {
-        if let Err(e) = mv(arg) {
+    for arg in &args.files {
+        if let Err(e) = mv::move_to_trash(arg) {
             eprintln!("Error moving file '{}' to trash: {}", arg, e);
-            std::process::exit(-1);
         }
     }
 }
