@@ -21,10 +21,6 @@ pub struct Args {
     pub files: Vec<String>,
 }
 
-pub fn test() {
-    println!("r has been called!");
-}
-
 pub fn view_trash() {
     println!("view_trash() called");
 }
