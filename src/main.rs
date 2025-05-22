@@ -30,28 +30,56 @@
 mod args;
 mod mv;
 mod utils;
+mod view;
 
 use args::Args;
 use clap::Parser;
+use rayon::prelude::*;
+
+// Interm program name.
+const PROGRAM_NAME: &str = "rrm";
 
 fn main() {
     // Parse the command line arguments
     let args = Args::parse();
-    let mut allow_dir_removal = false;
+    let mut allow_dir_removal: bool = false;
 
-    // Check if the 'recursive' flag was passed, and call 'test' if true
+    // Check if the 'recursive' flag was passed.
     if args.recursive {
         allow_dir_removal = true;
-    } else if args.view_trash{
-        args::view_trash();
+    } else if args.view_trash {
+        view::list_trash_contents();
+        return;
     }
 
-    // let args: Vec<String> = env::args().collect();
+    // If no files/dirs were specified, inform user and exit.
+    if args.files.len() < 1 {
+        println!("{}: missing operand", PROGRAM_NAME);
+        println!("Try '{} --help' for more information.", PROGRAM_NAME);
+        std::process::exit(1)
+    }
 
-    // Loop over each argument (excluding the first one, which is the program name)
-    for arg in &args.files {
+    // If working with fewer than three files, process them serially, otherwise process them in
+    // parallel.
+    if args.files.len() < 3 {
+        process_files(args.files, allow_dir_removal);
+    } else {
+        process_files_parallel(args.files, allow_dir_removal);
+    }
+}
+
+fn process_files(files: Vec<String>, allow_dir_removal: bool) {
+    files.iter().for_each(|arg| {
         if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
             eprintln!("Error moving file '{}' to trash: {}", arg, e);
         }
-    }
+    });
+}
+
+fn process_files_parallel(files: Vec<String>, allow_dir_removal: bool) {
+    files.par_iter().for_each(|arg| {
+        if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
+            eprintln!("Error moving file '{}' to trash: {}", arg, e);
+        }
+    });
 }
