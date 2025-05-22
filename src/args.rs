@@ -26,11 +26,7 @@ pub struct Args {
     #[arg(short = 'v', long, action = ArgAction::SetTrue)]
     pub view_trash: bool,
 
-    /// Free-form positional arguments
+    /// List of files or directories to send to trash
     #[arg()]
     pub files: Vec<String>,
-}
-
-pub fn view_trash() {
-    println!("view_trash() called");
 }
