@@ -29,7 +29,6 @@
 /// - Integration with GUI trash bins (e.g., Dolphin, Nautilus) for restoration.
 mod args;
 mod mv;
-mod utils;
 mod view;
 
 use args::Args;

@@ -12,15 +12,17 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
-use crate::utils;
-
 /// Moves a file (or directory) to the trash.
 pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
-    // Expand the ~ in the destination path
-    let trash_dir = utils::expand_tilde("~/trash");
+    let trash_dir = dirs::home_dir()
+        .map(|home| home.join("trash"))
+        .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
 
     // Get the filename from the source path
     let source_path = Path::new(source);
+
+    // Ensure the directory exists
+    fs::create_dir_all(&trash_dir)?; // No error if it already exists
 
     // Check if the source path is a directory
     if source_path.is_dir() && !allow_dir_removal {
