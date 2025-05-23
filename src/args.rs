@@ -10,11 +10,11 @@
 ///
 use clap::{ArgAction, Parser};
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
     version,
-    about = "A modern take on the traditional rm command, written in Rust."
+    about = "A modern take on the traditional rm utility, written in Rust."
 )]
 
 pub struct Args {
