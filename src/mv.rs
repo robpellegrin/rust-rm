@@ -14,11 +14,7 @@ use std::{fs, io};
 
 use crate::utils;
 
-/// .
-///
-/// # Errors
-///
-/// This function will return an error if .
+/// Moves a file (or directory) to the trash.
 pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
     // Expand the ~ in the destination path
     let trash_dir = utils::expand_tilde("~/trash");
