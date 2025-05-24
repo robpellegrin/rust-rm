@@ -10,9 +10,12 @@
 ///
 use std::env;
 use std::fs;
+use tabled::settings::style::Style;
+use tabled::{Table, Tabled};
 
-/// TODO --> Display relevant metadata in a table format.
-
+#[allow(unused)]
+// This function will likely be removed in favor of the function below that
+// prints out the trash contents in a table.
 pub fn list_trash_contents() {
     // Get the path to the trash directory
     let home_dir = env::home_dir().expect("Failed to get home directory");
@@ -47,6 +50,55 @@ pub fn list_trash_contents() {
         }
         Err(e) => {
             println!("Failed to read the trash directory: {}", e);
+        }
+    }
+}
+
+#[derive(Tabled)]
+struct TrashEntry {
+    filename: String,
+    original_path: String,
+    date_deleted: String,
+}
+
+pub fn list_trash_contents_table() {
+    let home_dir = env::home_dir().expect("Failed to get home directory");
+    let trash_dir = home_dir.join("trash");
+
+    if !trash_dir.exists() {
+        println!("Trash directory does not exist at {:?}", trash_dir);
+        return;
+    }
+
+    let mut entries: Vec<TrashEntry> = Vec::new();
+
+    match fs::read_dir(&trash_dir) {
+        Ok(dir_entries) => {
+            let mut has_files = false;
+
+            for entry in dir_entries {
+                if let Ok(entry) = entry {
+                    let file_name = entry.file_name().to_string_lossy().to_string();
+                    entries.push(TrashEntry {
+                        filename: file_name,
+                        original_path: String::new(), // Placeholder
+                        date_deleted: String::new(),  // Placeholder
+                    });
+                    has_files = true;
+                }
+            }
+
+            if has_files {
+                let mut table = Table::new(&entries);
+                table.with(Style::psql());
+                print!("{}", table)
+            } else {
+                println!("The trash is empty.");
+            }
+        }
+
+        Err(e) => {
+            eprintln!("Failed to read the trash directory: {}", e);
         }
     }
 }
