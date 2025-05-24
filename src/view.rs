@@ -56,9 +56,9 @@ pub fn list_trash_contents() {
 
 #[derive(Tabled)]
 struct TrashEntry {
-    filename: String,
-    original_path: String,
-    date_deleted: String,
+    file: String,
+    path: String,
+    date: String,
 }
 
 pub fn list_trash_contents_table() {
@@ -80,9 +80,9 @@ pub fn list_trash_contents_table() {
                 if let Ok(entry) = entry {
                     let file_name = entry.file_name().to_string_lossy().to_string();
                     entries.push(TrashEntry {
-                        filename: file_name,
-                        original_path: String::new(), // Placeholder
-                        date_deleted: String::new(),  // Placeholder
+                        file: file_name,
+                        path: String::new(), // Placeholder
+                        date: String::new(),  // Placeholder
                     });
                     has_files = true;
                 }
@@ -90,8 +90,8 @@ pub fn list_trash_contents_table() {
 
             if has_files {
                 let mut table = Table::new(&entries);
-                table.with(Style::psql());
-                print!("{}", table)
+                table.with(Style::sharp());
+                println!("{}", table)
             } else {
                 println!("The trash is empty.");
             }
