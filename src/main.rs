@@ -47,7 +47,7 @@ fn main() {
     if args.recursive {
         allow_dir_removal = true;
     } else if args.view_trash {
-        view::list_trash_contents();
+        view::list_trash_contents_table();
         return;
     }
 
