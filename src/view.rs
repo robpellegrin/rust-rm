@@ -82,16 +82,14 @@ pub fn list_trash_contents_table() {
                     entries.push(TrashEntry {
                         file: file_name,
                         path: String::new(), // Placeholder
-                        date: String::new(),  // Placeholder
+                        date: String::new(), // Placeholder
                     });
                     has_files = true;
                 }
             }
 
             if has_files {
-                let mut table = Table::new(&entries);
-                table.with(Style::sharp());
-                println!("{}", table)
+                println!("{}", Table::new(entries).with(Style::sharp()).to_string());
             } else {
                 println!("The trash is empty.");
             }
