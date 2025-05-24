@@ -1,9 +1,4 @@
-use chrono::Local;
-use std::fs::File;
-use std::io::{ErrorKind, Write};
-use std::path::{Path, PathBuf};
-use std::{fs, io};
-
+///
 /// =====================================================================
 /// Project Name: rust rm
 /// Description: An enhanced version of the common rm utility.
@@ -13,6 +8,12 @@ use std::{fs, io};
 /// License: MIT
 /// Repository:
 /// =====================================================================
+///
+use chrono::Local;
+use std::fs::File;
+use std::io::{ErrorKind, Write};
+use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 /// Moves a file (or directory) to the trash.
 pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {

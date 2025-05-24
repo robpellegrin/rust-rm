@@ -1,3 +1,4 @@
+///
 /// =====================================================================
 /// Project Name: rust rm
 /// Description: An enhanced version of the common rm utility.
