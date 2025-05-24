@@ -13,9 +13,10 @@ use clap::{ArgAction, Parser};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
-    version = "0.2",
+    version = "0.2.1",
     author = "Robert Pellegrin",
-    about = "A modern take on the traditional rm utility, written in Rust.\n\nAuthor: Robert Pellegrin"
+    about = "A modern take on the traditional rm utility, written in Rust.
+        \nAuthor: Robert Pellegrin"
 )]
 
 pub struct Args {
