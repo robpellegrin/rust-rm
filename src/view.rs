@@ -15,12 +15,14 @@ use tabled::settings::style::Style;
 use tabled::{Table, Tabled};
 
 #[allow(unused)]
+// NOTE!!
 // This function will likely be removed in favor of the function below that
 // prints out the trash contents in a table.
+//
 pub fn list_trash_contents() {
     // Get the path to the trash directory
     let home_dir = env::home_dir().expect("Failed to get home directory");
-    let trash_dir = home_dir.join("trash");
+    let trash_dir = home_dir.join(".local/share/Trash/files");
 
     // Check if the trash directory exists
     if !trash_dir.exists() {
@@ -64,7 +66,7 @@ struct TrashEntry {
 
 pub fn list_trash_contents_table() {
     let home_dir = env::home_dir().expect("Failed to get home directory");
-    let trash_dir = home_dir.join("trash");
+    let trash_dir = home_dir.join(".local/share/Trash/files");
 
     if !trash_dir.exists() {
         println!("Trash directory does not exist at {:?}", trash_dir);
