@@ -17,15 +17,16 @@ use std::{fs, io};
 
 /// Moves a file (or directory) to the trash.
 pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
-    let trash_dir = dirs::home_dir()
-        .map(|home| home.join("trash"))
+    let trash_dir_files = dirs::home_dir()
+        .map(|home| home.join(".local/share/Trash/files"))
         .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
 
     // Get the filename from the source path
     let source_path = Path::new(source);
 
+    // TODO --> If the directory does not exist, silently create it.
     // Ensure the directory exists
-    fs::create_dir_all(&trash_dir)?; // No error if it already exists
+    fs::create_dir_all(&trash_dir_files)?; // No error if it already exists
 
     // Check if the source path is a directory
     if source_path.is_dir() && !allow_dir_removal {
@@ -46,16 +47,15 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
     };
 
     // Get a resolved trash path that avoids naming conflicts
-    let trash_path = resolve_naming_conflict(&trash_dir, &filename);
+    let trash_path = resolve_naming_conflict(&trash_dir_files, &filename);
+
+    if let Err(e) = create_metadata_file(source) {
+        eprintln!("Error moving creating metadata file for {}: {}", source, e);
+        return Ok(());
+    }
 
     // Try to rename (move) the file to the trash directory
     fs::rename(source, &trash_path)?;
-
-    /*
-     if let Err(e) = create_metadata_file(source) {
-        eprintln!("Error moving creating metadata file for {}, {}", source, e);
-    }
-    */
 
     Ok(())
 }
@@ -91,19 +91,27 @@ fn create_metadata_file(filename: &str) -> io::Result<()> {
     let current_date_time = Local::now();
     let formatted_date_time = current_date_time.format("%Y-%m-%dT%H:%M:%S").to_string();
 
-    let new_filename = Path::new(filename)
-        .to_str()
-        .map(|s| format!("{}{}", s, ".rrminfo"))
-        .expect("Invalid UTF-8 in file path");
+    let trash_dir_metadata = dirs::home_dir()
+        .map(|home| home.join(".local/share/Trash/info"))
+        .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
 
-    // Create the metadata file
-    let mut file = File::create(&new_filename)?;
+    fs::create_dir_all(&trash_dir_metadata)?; // Ensure the directory exists
+
+    let new_filename = Path::new(filename)
+        .file_name()
+        .and_then(|s| s.to_str())
+        .map(|s| format!("{}.trashinfo", s))
+        .ok_or_else(|| io::Error::new(ErrorKind::InvalidInput, "Invalid UTF-8 in filename"))?;
+
+    let final_filename = resolve_naming_conflict(&trash_dir_metadata, &new_filename);
+    let full_path = trash_dir_metadata.join(&final_filename);
+
+    let mut file = File::create(&full_path)?;
     writeln!(file, "[Trash Info]")?;
     writeln!(file, "Path={}", filename)?;
     writeln!(file, "DeletionDate={}", formatted_date_time)?;
 
-    // Move the file to trash and propagate errors
-    move_to_trash(&new_filename, false)?;
-
+    // File is already in place, no need to move/rename
     Ok(())
 }
+
