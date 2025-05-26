@@ -60,33 +60,9 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
     Ok(())
 }
 
-/// Given a target directory and desired filename, append suffixes like (1), (2), etc if needed
-/// in order to resolve naming conflicts.
-fn resolve_naming_conflict(trash_dir: &Path, filename: &str) -> PathBuf {
-    let mut candidate = trash_dir.join(filename);
-    let mut counter = 1;
-
-    while candidate.exists() {
-        let path = Path::new(filename);
-        let new_filename = format!(
-            "{}({}){}",
-            path.file_stem().unwrap_or_default().to_string_lossy(),
-            counter,
-            path.extension()
-                .map_or(String::new(), |ext| format!(".{}", ext.to_string_lossy()))
-        );
-        candidate = trash_dir.join(new_filename);
-        counter += 1;
-    }
-
-    candidate
-}
-
 /// Create a text file with metadata about the file being sent to the trash.
 /// Metadata includes the original path of the file, as well as the time and
 /// date it was moved to the trash.
-///
-#[allow(unused)]
 fn create_metadata_file(filename: &str) -> io::Result<()> {
     let current_date_time = Local::now();
     let formatted_date_time = current_date_time.format("%Y-%m-%dT%H:%M:%S").to_string();
@@ -115,3 +91,24 @@ fn create_metadata_file(filename: &str) -> io::Result<()> {
     Ok(())
 }
 
+/// Given a target directory and desired filename, append suffixes like (1), (2), etc if needed
+/// in order to resolve naming conflicts.
+fn resolve_naming_conflict(trash_dir: &Path, filename: &str) -> PathBuf {
+    let mut candidate = trash_dir.join(filename);
+    let mut counter = 1;
+
+    while candidate.exists() {
+        let path = Path::new(filename);
+        let new_filename = format!(
+            "{}({}){}",
+            path.file_stem().unwrap_or_default().to_string_lossy(),
+            counter,
+            path.extension()
+                .map_or(String::new(), |ext| format!(".{}", ext.to_string_lossy()))
+        );
+        candidate = trash_dir.join(new_filename);
+        counter += 1;
+    }
+
+    candidate
+}
