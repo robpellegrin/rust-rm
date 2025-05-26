@@ -32,7 +32,7 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
     if source_path.is_dir() && !allow_dir_removal {
         return Err(io::Error::new(
             ErrorKind::InvalidInput,
-            "Cannot move a directory to trash",
+            "Is a directory",
         ));
     }
 

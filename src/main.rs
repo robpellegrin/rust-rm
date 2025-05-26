@@ -52,7 +52,7 @@ fn main() {
 fn process_files(files: Vec<String>, allow_dir_removal: bool) {
     files.iter().for_each(|arg| {
         if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
-            eprintln!("Error moving file '{}' to trash: {}", arg, e);
+            eprintln!("rrm: cannot remove '{}': {}", arg, e);
         }
     });
 }
@@ -60,7 +60,7 @@ fn process_files(files: Vec<String>, allow_dir_removal: bool) {
 fn process_files_parallel(files: Vec<String>, allow_dir_removal: bool) {
     files.par_iter().for_each(|arg| {
         if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
-            eprintln!("Error moving file '{}' to trash: {}", arg, e);
+            eprintln!("rrm: cannot remove '{}': {}", arg, e);
         }
     });
 }
