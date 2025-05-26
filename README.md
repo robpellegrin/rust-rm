@@ -6,7 +6,7 @@ An enhanced version of the Unix `rm` command written in Rust, featuring a built-
 ## 🧰 Features
 
 - 🗑️ **Trash bin compliant with FreeDesktop.org spec**:  
-  Instead of permanently deleting files like `rm`, `rust-rm` moves them to the trash location defined by the [FreeDesktop.org Trash Specification](https://specifications.freedesktop.org/trash-spec/1.0/. This is the same location used by most desktop environments (e.g. GNOME, KDE), ensuring compatibility with your system's graphical trash tools.
+  Instead of permanently deleting files like `rm`, `rust-rm` moves them to the trash location defined by the [FreeDesktop.org Trash Specification](https://specifications.freedesktop.org/trash-spec/1.0/). This is the same location used by most desktop environments (e.g. GNOME, KDE), ensuring compatibility with your system's graphical trash tools.
 - 🧭 **Familiar interface**:  
   Designed to mimic the traditional `rm` command-line interface for seamless replacement.
 - 💬 **CLI tool**:  
