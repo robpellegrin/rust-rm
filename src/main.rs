@@ -10,6 +10,7 @@
 /// =====================================================================
 ///
 mod args;
+mod empty;
 mod mv;
 mod view;
 
@@ -25,12 +26,21 @@ fn main() {
     let args = Args::parse();
     let mut allow_dir_removal: bool = false;
 
+    if args.view_trash {
+        view::list_trash_contents_table();
+        return;
+    }
+
+    if args.empty {
+        if let Err(e) = empty::empty_trash() {
+            eprintln!("Failed to empty trash: {}", e);
+        }
+        return;
+    }
+
     // Check if the 'recursive' flag was passed.
     if args.recursive {
         allow_dir_removal = true;
-    } else if args.view_trash {
-        view::list_trash_contents_table();
-        return;
     }
 
     // If no files/dirs were specified, inform user and exit.
