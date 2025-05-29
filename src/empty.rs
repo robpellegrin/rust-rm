@@ -45,7 +45,7 @@ fn confirm(prompt: &str) -> io::Result<bool> {
 
 /// Empties the user's trash directory located at ~/.local/share/Trash/{files,info}
 pub fn empty_trash() -> io::Result<()> {
-    if !confirm("Are you sure you want to permanently delete all files in the trash?")? {
+    if !confirm("Permanently delete all files in the trash?")? {
         return Ok(()); // Do nothing if user says no
     }
 
