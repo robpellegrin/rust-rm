@@ -83,13 +83,15 @@ pub fn list_trash_contents_table() {
             for entry in dir_entries {
                 if let Ok(entry) = entry {
                     let file_name = entry.file_name().to_string_lossy().to_string();
-                    let original_path = get_original_path_from_trashinfo(&file_name)
+                    let original_path = get_info_from_trashinfo(&file_name, "Path=")
+                        .unwrap_or_else(|| "Unknown".to_string());
+                    let date_info = get_info_from_trashinfo(&file_name, "DeletionDate=")
                         .unwrap_or_else(|| "Unknown".to_string());
 
                     entries.push(TrashEntry {
                         file: file_name,
                         path: original_path,
-                        date: String::new(), // Placeholder for date
+                        date: date_info,
                     });
                     has_files = true;
                 }
@@ -109,7 +111,7 @@ pub fn list_trash_contents_table() {
 }
 
 /// Reads the original file path from the corresponding .trashinfo file
-fn get_original_path_from_trashinfo(file_name: &str) -> Option<String> {
+fn get_info_from_trashinfo(file_name: &str, search_term: &str) -> Option<String> {
     let home_dir = dirs_next::home_dir()?;
     let info_path = home_dir
         .join(".local/share/Trash/info")
@@ -124,8 +126,8 @@ fn get_original_path_from_trashinfo(file_name: &str) -> Option<String> {
 
     for line in reader.lines() {
         if let Ok(line) = line {
-            if line.starts_with("Path=") {
-                return Some(line[5..].trim().to_string());
+            if line.starts_with(search_term) {
+                return Some(line[search_term.len()..].trim().to_string());
             }
         }
     }
