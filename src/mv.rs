@@ -17,7 +17,7 @@ use std::{fs, io};
 
 /// Moves a file (or directory) to the trash.
 pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
-    let trash_dir_files = dirs::home_dir()
+    let trash_dir_files = dirs_next::home_dir()
         .map(|home| home.join(".local/share/Trash/files"))
         .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
 
@@ -30,10 +30,7 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
 
     // Check if the source path is a directory
     if source_path.is_dir() && !allow_dir_removal {
-        return Err(io::Error::new(
-            ErrorKind::InvalidInput,
-            "Is a directory",
-        ));
+        return Err(io::Error::new(ErrorKind::InvalidInput, "Is a directory"));
     }
 
     let filename = match source_path.file_name() {
@@ -67,7 +64,7 @@ fn create_metadata_file(filename: &str) -> io::Result<()> {
     let current_date_time = Local::now();
     let formatted_date_time = current_date_time.format("%Y-%m-%dT%H:%M:%S").to_string();
 
-    let trash_dir_metadata = dirs::home_dir()
+    let trash_dir_metadata = dirs_next::home_dir()
         .map(|home| home.join(".local/share/Trash/info"))
         .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
 
