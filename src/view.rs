@@ -9,8 +9,9 @@
 /// Repository:
 /// =====================================================================
 ///
-use std::env;
 use std::fs;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use tabled::settings::style::Style;
 use tabled::{Table, Tabled};
 
@@ -21,7 +22,7 @@ use tabled::{Table, Tabled};
 //
 pub fn list_trash_contents() {
     // Get the path to the trash directory
-    let home_dir = env::home_dir().expect("Failed to get home directory");
+    let home_dir = dirs_next::home_dir().expect("Failed to get home directory");
     let trash_dir = home_dir.join(".local/share/Trash/files");
 
     // Check if the trash directory exists
@@ -65,7 +66,7 @@ struct TrashEntry {
 }
 
 pub fn list_trash_contents_table() {
-    let home_dir = env::home_dir().expect("Failed to get home directory");
+    let home_dir = dirs_next::home_dir().expect("Failed to get home directory");
     let trash_dir = home_dir.join(".local/share/Trash/files");
 
     if !trash_dir.exists() {
@@ -82,10 +83,13 @@ pub fn list_trash_contents_table() {
             for entry in dir_entries {
                 if let Ok(entry) = entry {
                     let file_name = entry.file_name().to_string_lossy().to_string();
+                    let original_path = get_original_path_from_trashinfo(&file_name)
+                        .unwrap_or_else(|| "Unknown".to_string());
+
                     entries.push(TrashEntry {
                         file: file_name,
-                        path: String::new(), // Placeholder
-                        date: String::new(), // Placeholder
+                        path: original_path,
+                        date: String::new(), // Placeholder for date
                     });
                     has_files = true;
                 }
@@ -102,4 +106,29 @@ pub fn list_trash_contents_table() {
             eprintln!("Failed to read the trash directory: {}", e);
         }
     }
+}
+
+/// Reads the original file path from the corresponding .trashinfo file
+fn get_original_path_from_trashinfo(file_name: &str) -> Option<String> {
+    let home_dir = dirs_next::home_dir()?;
+    let info_path = home_dir
+        .join(".local/share/Trash/info")
+        .join(format!("{}.trashinfo", file_name));
+
+    if !info_path.exists() {
+        return None;
+    }
+
+    let file = File::open(info_path).ok()?;
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            if line.starts_with("Path=") {
+                return Some(line[5..].trim().to_string());
+            }
+        }
+    }
+
+    None
 }
