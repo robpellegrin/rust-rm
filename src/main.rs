@@ -40,21 +40,7 @@ fn main() {
         std::process::exit(1)
     }
 
-    // If working with fewer than three files, process them serially, otherwise process them in
-    // parallel.
-    if args.files.len() < 3 {
-        process_files(args.files, allow_dir_removal);
-    } else {
-        process_files_parallel(args.files, allow_dir_removal);
-    }
-}
-
-fn process_files(files: Vec<String>, allow_dir_removal: bool) {
-    files.iter().for_each(|arg| {
-        if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
-            eprintln!("rrm: cannot remove '{}': {}", arg, e);
-        }
-    });
+    process_files_parallel(args.files, allow_dir_removal);
 }
 
 fn process_files_parallel(files: Vec<String>, allow_dir_removal: bool) {
