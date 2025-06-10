@@ -14,7 +14,7 @@ use clap::{ArgAction, Parser};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
-    version = "0.2.1",
+    version = "0.2.2",
     author = "Robert Pellegrin",
     about = "A modern take on the traditional rm utility, written in Rust.
         \nAuthor: Robert Pellegrin"
