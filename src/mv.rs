@@ -46,9 +46,22 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
     // Get a resolved trash path that avoids naming conflicts
     let trash_path = resolve_naming_conflict(&trash_dir_files, &filename);
 
-    if let Err(e) = create_metadata_file(source) {
-        eprintln!("Error moving creating metadata file for {}: {}", source, e);
-        return Ok(());
+    match fs::canonicalize(source_path) {
+        Ok(abs_path) => {
+            if let Some(path_str) = abs_path.to_str() {
+                if let Err(e) = create_metadata_file(path_str) {
+                    eprintln!("Error creating metadata file for {}: {}", source, e);
+                    return Ok(());
+                }
+            } else {
+                eprintln!("Path contains invalid UTF-8: {}", abs_path.display());
+                return Ok(());
+            }
+        }
+        Err(e) => {
+            eprintln!("Error resolving path for {}: {}", source, e);
+            return Ok(());
+        }
     }
 
     // Try to rename (move) the file to the trash directory
