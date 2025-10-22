@@ -15,8 +15,10 @@ use std::io::{ErrorKind, Write};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
+use crate::args::Args;
+
 /// Moves a file (or directory) to the trash.
-pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<()> {
+pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
     let trash_dir_files = dirs_next::home_dir()
         .map(|home| home.join(".local/share/Trash/files"))
         .ok_or_else(|| io::Error::new(ErrorKind::NotFound, "Could not determine home directory"))?;
@@ -29,7 +31,7 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
     fs::create_dir_all(&trash_dir_files)?; // No error if it already exists
 
     // Check if the source path is a directory
-    if source_path.is_dir() && !allow_dir_removal {
+    if source_path.is_dir() && !args.recursive {
         return Err(io::Error::new(ErrorKind::InvalidInput, "Is a directory"));
     }
 
@@ -66,6 +68,10 @@ pub fn move_to_trash(source: &str, allow_dir_removal: bool) -> std::io::Result<(
 
     // Try to rename (move) the file to the trash directory
     fs::rename(source, &trash_path)?;
+
+    if args.verbose {
+        println!("removed '{}'", source);
+    }
 
     Ok(())
 }
