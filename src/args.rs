@@ -29,7 +29,7 @@ pub struct Args {
     #[arg(long, action = ArgAction::SetTrue)]
     pub view_trash: bool,
 
-    // Explain what is being done
+    /// Explain what is being done
     #[arg(short = 'v', long, action = ArgAction::SetTrue)]
     pub verbose: bool,
 
