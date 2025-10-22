@@ -14,7 +14,7 @@ use clap::{ArgAction, Parser};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
-    version = "0.2.2",
+    version = "0.2.3",
     author = "Robert Pellegrin",
     about = "A modern take on the traditional rm utility, written in Rust.
         \nAuthor: Robert Pellegrin"
@@ -26,7 +26,7 @@ pub struct Args {
     pub recursive: bool,
 
     /// Display contents in trash
-    #[arg(short = 'v', long, action = ArgAction::SetTrue)]
+    #[arg(long, action = ArgAction::SetTrue)]
     pub view_trash: bool,
 
     /// Empty the trash
