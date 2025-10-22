@@ -14,7 +14,8 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
-/// Deletes all contents inside the given directory (but not the directory itself).
+/// Deletes all contents inside the given directory (but not the directory
+/// itself).
 fn delete_directory_contents(dir: &Path) -> io::Result<()> {
     if dir.exists() && dir.is_dir() {
         for entry in fs::read_dir(dir)? {
@@ -34,7 +35,9 @@ fn delete_directory_contents(dir: &Path) -> io::Result<()> {
 /// Returns true if the user enters 'y' or 'Y'.
 fn confirm(prompt: &str) -> io::Result<bool> {
     print!("{} [y/N]: ", prompt);
-    io::stdout().flush()?; // Make sure prompt shows up before input
+
+    // Make sure prompt shows up before input
+    io::stdout().flush()?;
 
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
@@ -43,7 +46,8 @@ fn confirm(prompt: &str) -> io::Result<bool> {
     Ok(response == "y")
 }
 
-/// Empties the user's trash directory located at ~/.local/share/Trash/{files,info}
+/// Empties the user's trash directory located at:
+/// ~/.local/share/Trash/{files,info}
 pub fn empty_trash() -> io::Result<()> {
     if !confirm("Permanently delete all files in the trash?")? {
         return Ok(()); // Do nothing if user says no
