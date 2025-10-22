@@ -24,7 +24,6 @@ const PROGRAM_NAME: &str = "rrm";
 fn main() {
     // Parse the command line arguments
     let args = Args::parse();
-    let mut allow_dir_removal: bool = false;
 
     if args.view_trash {
         view::list_trash_contents_table();
@@ -38,11 +37,6 @@ fn main() {
         return;
     }
 
-    // Check if the 'recursive' flag was passed.
-    if args.recursive {
-        allow_dir_removal = true;
-    }
-
     // If no files/dirs were specified, inform user and exit.
     if args.files.len() < 1 {
         println!("{}: missing operand", PROGRAM_NAME);
@@ -50,12 +44,12 @@ fn main() {
         std::process::exit(1)
     }
 
-    process_files_parallel(args.files, allow_dir_removal);
+    process_files_parallel(args.files, &Args::parse());
 }
 
-fn process_files_parallel(files: Vec<String>, allow_dir_removal: bool) {
+fn process_files_parallel(files: Vec<String>, args: &Args) {
     files.par_iter().for_each(|arg| {
-        if let Err(e) = mv::move_to_trash(arg, allow_dir_removal) {
+        if let Err(e) = mv::move_to_trash(arg, args) {
             eprintln!("rrm: cannot remove '{}': {}", arg, e);
         }
     });
