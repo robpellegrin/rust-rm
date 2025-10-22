@@ -14,7 +14,7 @@ use clap::{ArgAction, Parser};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
-    version = "0.2.3",
+    version = "0.2.4",
     author = "Robert Pellegrin",
     about = "A modern take on the traditional rm utility, written in Rust.
         \nAuthor: Robert Pellegrin"
@@ -29,9 +29,13 @@ pub struct Args {
     #[arg(long, action = ArgAction::SetTrue)]
     pub view_trash: bool,
 
+    // Explain what is being done
+    #[arg(short = 'v', long, action = ArgAction::SetTrue)]
+    pub verbose: bool,
+
     /// Empty the trash
     #[arg(long, action = ArgAction::SetTrue)]
-    pub empty: bool, 
+    pub empty: bool,
 
     /// List of files or directories to send to trash
     #[arg()]
