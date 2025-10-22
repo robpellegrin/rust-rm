@@ -25,19 +25,19 @@ pub struct Args {
     #[arg(short = 'r', long, action = ArgAction::SetTrue)]
     pub recursive: bool,
 
-    /// Display contents in trash
+    /// list contents of trash directory
     #[arg(long, action = ArgAction::SetTrue)]
     pub view_trash: bool,
 
-    /// Explain what is being done
+    /// explain what is being done.
     #[arg(short = 'v', long, action = ArgAction::SetTrue)]
     pub verbose: bool,
 
-    /// Empty the trash
+    /// permanently delete all files in the trash directory
     #[arg(long, action = ArgAction::SetTrue)]
     pub empty: bool,
 
-    /// List of files or directories to send to trash
+    /// list of files/directories to send to trash
     #[arg()]
     pub files: Vec<String>,
 }
