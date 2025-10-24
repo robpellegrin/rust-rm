@@ -46,19 +46,30 @@ fn confirm(prompt: &str) -> io::Result<bool> {
     Ok(response == "y")
 }
 
+/// Count entries in a directory (non-recursive)
+fn count_entries_in_dir<P: AsRef<std::path::Path>>(path: P) -> io::Result<usize> {
+    Ok(fs::read_dir(path)?.count())
+}
+
 /// Empties the user's trash directory located at:
 /// ~/.local/share/Trash/{files,info}
 pub fn empty_trash() -> io::Result<()> {
-    if !confirm("Permanently delete all files in the trash?")? {
-        return Ok(()); // Do nothing if user says no
-    }
-
     let home = env::var("HOME")
         .map_err(|_| io::Error::new(io::ErrorKind::NotFound, "HOME env var not set"))?;
     let trash_base = PathBuf::from(home).join(".local/share/Trash");
 
     let files_dir = trash_base.join("files");
     let info_dir = trash_base.join("info");
+
+    let count = count_entries_in_dir(&info_dir)?;
+
+    // Prompt the user with the count included
+    let prompt = format!("Permanently delete all {} file(s) in the trash?", count);
+
+    if !confirm(&prompt)? {
+        println!("Cancelled");
+        return Ok(());
+    }
 
     delete_directory_contents(&files_dir)?;
     delete_directory_contents(&info_dir)?;
