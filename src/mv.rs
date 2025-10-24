@@ -66,6 +66,13 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
         }
     }
 
+    if args.interactive {
+        let prompt = format!("move '{}' to the trash?", source);
+        if !confirm(&prompt)? {
+            return Ok(());
+        }
+    }
+
     // Try to rename (move) the file to the trash directory
     fs::rename(source, &trash_path)?;
 
@@ -127,4 +134,19 @@ fn resolve_naming_conflict(trash_dir: &Path, filename: &str) -> PathBuf {
     }
 
     candidate
+}
+
+/// Prompts the user for a yes/no confirmation.
+/// Returns true if the user enters 'y' or 'Y'.
+fn confirm(prompt: &str) -> io::Result<bool> {
+    print!("{} [y/N]: ", prompt);
+
+    // Make sure prompt shows up before input
+    io::stdout().flush()?;
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input)?;
+    let response = input.trim().to_lowercase();
+
+    Ok(response == "y")
 }

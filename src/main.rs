@@ -44,11 +44,23 @@ fn main() {
         std::process::exit(1)
     }
 
-    process_files_parallel(args.files, &Args::parse());
+    if args.interactive {
+        process_files_serial(args.files, &Args::parse());
+    } else {
+        process_files_parallel(args.files, &Args::parse());
+    }
 }
 
 fn process_files_parallel(files: Vec<String>, args: &Args) {
     files.par_iter().for_each(|arg| {
+        if let Err(e) = mv::move_to_trash(arg, args) {
+            eprintln!("rrm: cannot remove '{}': {}", arg, e);
+        }
+    });
+}
+
+fn process_files_serial(files: Vec<String>, args: &Args) {
+    files.iter().for_each(|arg| {
         if let Err(e) = mv::move_to_trash(arg, args) {
             eprintln!("rrm: cannot remove '{}': {}", arg, e);
         }
