@@ -48,6 +48,13 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
     // Get a resolved trash path that avoids naming conflicts
     let trash_path = resolve_naming_conflict(&trash_dir_files, &filename);
 
+    // Check if the file is a symlink before proceeding. If it is, delete it instead of attempting
+    // to move it to the trash.
+    if fs::symlink_metadata(source)?.file_type().is_symlink() {
+        fs::remove_file(source)?;
+        return Ok(());
+    }
+
     match fs::canonicalize(source_path) {
         Ok(abs_path) => {
             if let Some(path_str) = abs_path.to_str() {
