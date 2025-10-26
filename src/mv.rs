@@ -80,6 +80,11 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
         }
     }
 
+    if args.skip_trash {
+        fs::remove_file(source)?;
+        return Ok(());
+    }
+
     // Try to rename (move) the file to the trash directory
     fs::rename(source, &trash_path)?;
 

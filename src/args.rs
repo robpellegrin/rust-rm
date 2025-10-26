@@ -41,6 +41,10 @@ pub struct Args {
     #[arg(long, action = ArgAction::SetTrue)]
     pub empty: bool,
 
+    /// remove directories and their contents recursively
+    #[arg(short = 's', long, action = ArgAction::SetTrue)]
+    pub skip_trash: bool,
+
     /// list of files/directories to send to trash
     #[arg()]
     pub files: Vec<String>,
