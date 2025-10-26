@@ -30,6 +30,13 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
     // Ensure the directory exists
     fs::create_dir_all(&trash_dir_files)?; // No error if it already exists
 
+    // Check if the file is a symlink before proceeding. If it is, delete it instead of attempting
+    // to move it to the trash.
+    if fs::symlink_metadata(source)?.file_type().is_symlink() {
+        fs::remove_file(source)?;
+        return Ok(());
+    }
+
     // Check if the source path is a directory
     if source_path.is_dir() && !args.recursive {
         return Err(io::Error::new(ErrorKind::InvalidInput, "Is a directory"));
@@ -47,13 +54,6 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
 
     // Get a resolved trash path that avoids naming conflicts
     let trash_path = resolve_naming_conflict(&trash_dir_files, &filename);
-
-    // Check if the file is a symlink before proceeding. If it is, delete it instead of attempting
-    // to move it to the trash.
-    if fs::symlink_metadata(source)?.file_type().is_symlink() {
-        fs::remove_file(source)?;
-        return Ok(());
-    }
 
     match fs::canonicalize(source_path) {
         Ok(abs_path) => {
