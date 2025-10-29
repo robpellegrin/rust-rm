@@ -10,7 +10,7 @@
 /// =====================================================================
 ///
 use std::{
-    fs,
+    fs::{self, File},
     io::{BufRead, BufReader},
 };
 use tabled::settings::style::Style;
