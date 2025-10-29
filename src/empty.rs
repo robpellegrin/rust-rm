@@ -9,10 +9,11 @@
 /// Repository:
 /// =====================================================================
 ///
-use std::env;
-use std::fs;
-use std::io::{self, Write};
-use std::path::{Path, PathBuf};
+use std::{
+    env, fs,
+    io::{self, Write},
+    path::{Path, PathBuf},
+};
 
 /// Deletes all contents inside the given directory (but not the directory
 /// itself).

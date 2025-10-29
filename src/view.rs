@@ -9,9 +9,10 @@
 /// Repository:
 /// =====================================================================
 ///
-use std::fs;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::{
+    fs,
+    io::{BufRead, BufReader},
+};
 use tabled::settings::style::Style;
 use tabled::{Table, Tabled};
 

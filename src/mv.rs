@@ -10,10 +10,11 @@
 /// =====================================================================
 ///
 use chrono::Local;
-use std::fs::File;
-use std::io::{ErrorKind, Write};
-use std::path::{Path, PathBuf};
-use std::{fs, io};
+use std::{
+    fs::{self, File},
+    io::{self, ErrorKind, Write},
+    path::{Path, PathBuf},
+};
 
 use crate::args::Args;
 
