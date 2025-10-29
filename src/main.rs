@@ -18,11 +18,9 @@ use args::Args;
 use clap::Parser;
 use rayon::prelude::*;
 
-// Interm program name.
 const PROGRAM_NAME: &str = "rrm";
 
 fn main() {
-    // Parse the command line arguments
     let args = Args::parse();
 
     if args.view_trash {
@@ -39,8 +37,8 @@ fn main() {
 
     // If no files/dirs were specified, inform user and exit.
     if args.files.len() < 1 {
-        println!("{}: missing operand", PROGRAM_NAME);
-        println!("Try '{} --help' for more information.", PROGRAM_NAME);
+        eprintln!("{}: missing operand", PROGRAM_NAME);
+        eprintln!("Try '{} --help' for more information.", PROGRAM_NAME);
         std::process::exit(1)
     }
 
@@ -60,6 +58,7 @@ fn process_files_parallel(files: Vec<String>, args: &Args) {
 }
 
 fn process_files_serial(files: Vec<String>, args: &Args) {
+    eprintln!("WARNING: interactive flag disabled parallelism");
     files.iter().for_each(|arg| {
         if let Err(e) = mv::move_to_trash(arg, args) {
             eprintln!("rrm: cannot remove '{}': {}", arg, e);
