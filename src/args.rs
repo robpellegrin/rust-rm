@@ -14,7 +14,7 @@ use clap::{ArgAction, Parser};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 #[command(
-    version = "0.2.8",
+    version = "0.2.9",
     author = "Robert Pellegrin",
     about = "A modern take on the traditional rm utility, written in Rust.
         \nAuthor: Robert Pellegrin"
@@ -41,7 +41,7 @@ pub struct Args {
     #[arg(long, action = ArgAction::SetTrue)]
     pub empty: bool,
 
-    /// remove directories and their contents recursively
+    /// delete files/directories without moving to trash bin
     #[arg(short = 's', long, action = ArgAction::SetTrue)]
     pub skip_trash: bool,
 

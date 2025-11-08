@@ -53,6 +53,15 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
         }
     };
 
+    if args.skip_trash {
+        if source_path.is_dir() {
+            fs::remove_dir_all(source)?;
+        } else {
+            fs::remove_file(source)?;
+        }
+        return Ok(());
+    }
+
     // Get a resolved trash path that avoids naming conflicts
     let trash_path = resolve_naming_conflict(&trash_dir_files, &filename);
 
@@ -81,9 +90,8 @@ pub fn move_to_trash(source: &str, args: &Args) -> std::io::Result<()> {
         }
     }
 
-    if args.skip_trash {
-        fs::remove_file(source)?;
-        return Ok(());
+    if args.verbose {
+        println!("removed '{}'", source);
     }
 
     // Try to rename (move) the file to the trash directory
