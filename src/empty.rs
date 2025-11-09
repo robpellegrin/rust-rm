@@ -42,14 +42,10 @@ fn confirm(prompt: &str) -> io::Result<bool> {
 
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
+
     let response = input.trim().to_lowercase();
 
     Ok(response == "y")
-}
-
-/// Count entries in a directory (non-recursive)
-fn count_entries_in_dir<P: AsRef<std::path::Path>>(path: P) -> io::Result<usize> {
-    Ok(fs::read_dir(path)?.count())
 }
 
 /// Empties the user's trash directory located at:
@@ -62,9 +58,8 @@ pub fn empty_trash() -> io::Result<()> {
     let files_dir = trash_base.join("files");
     let info_dir = trash_base.join("info");
 
-    let count = count_entries_in_dir(&info_dir)?;
+    let count = fs::read_dir(&info_dir)?.count();
 
-    // Prompt the user with the count included
     let prompt = format!("Permanently delete all {} file(s) in the trash?", count);
 
     if !confirm(&prompt)? {
