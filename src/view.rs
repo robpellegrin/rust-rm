@@ -170,6 +170,16 @@ impl App {
         self.colors = TableColors::new(&PALETTES[self.color_index]);
     }
 
+    // TODO
+    pub fn delete_selection(&mut self) {
+        self.items.pop();
+    }
+
+    // TOOD
+    pub fn restore_selection(&mut self) {
+        self.items.pop();
+    }
+
     fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         loop {
             terminal.draw(|frame| self.draw(frame))?;
@@ -187,6 +197,8 @@ impl App {
                         KeyCode::Char('h') | KeyCode::Left if shift_pressed => {
                             self.previous_color();
                         }
+                        KeyCode::Char('d') => self.delete_selection(),
+                        KeyCode::Char('r') => self.restore_selection(),
                         KeyCode::Char('l') | KeyCode::Right => self.next_column(),
                         KeyCode::Char('h') | KeyCode::Left => self.previous_column(),
                         _ => {}
