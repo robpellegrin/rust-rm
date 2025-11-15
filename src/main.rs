@@ -37,6 +37,7 @@ fn main() {
 
     // If no files/dirs were specified, inform user and exit.
     if args.files.len() < 1 {
+        view::list_trash_contents_table();
         eprintln!("{}: missing operand", PROGRAM_NAME);
         eprintln!("Try '{} --help' for more information.", PROGRAM_NAME);
         std::process::exit(1)

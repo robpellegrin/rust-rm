@@ -1,11 +1,15 @@
 [package]
 name = "rrm"
-version = "0.2.9"
+version = "0.3.0"
 edition = "2024"
 
 [dependencies]
 chrono = "0.4"
 clap = {version = "4.5", features = ["derive"]}
+color-eyre = "0.6.5"
+crossterm = "0.29.0"
 dirs-next = "2.0"
+itertools = "0.14.0"
+ratatui = "0.29.0"
 rayon = "1.11.0"
-tabled = "0.19"
+unicode-width = "0.2.0"

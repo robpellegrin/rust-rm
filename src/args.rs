@@ -12,9 +12,9 @@
 use clap::{ArgAction, Parser};
 
 #[derive(Parser)]
-#[command(arg_required_else_help = true)]
+#[command(arg_required_else_help = false)]
 #[command(
-    version = "0.2.9",
+    version = "0.3.0",
     author = "Robert Pellegrin",
     about = "A modern take on the traditional rm utility, written in Rust.
         \nAuthor: Robert Pellegrin"
