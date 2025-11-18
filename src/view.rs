@@ -247,7 +247,7 @@ impl App {
                 .map(|content| Cell::from(Text::from(format!("\n{content}\n"))))
                 .collect::<Row>()
                 .style(Style::new().fg(self.colors.row_fg).bg(color))
-                .height(4)
+                .height(2)
         });
         let bar = " █ ";
         let t = Table::new(
@@ -327,9 +327,9 @@ fn get_trash_info() -> Vec<TrashEntry> {
                         .unwrap_or_else(|| "Unknown".to_string());
 
                     entries.push(TrashEntry {
-                        file: file_name.to_string(),
-                        path: original_path.to_string(),
-                        date: date_info.to_string(),
+                        file: file_name,
+                        path: original_path,
+                        date: date_info,
                     });
                 }
             }
